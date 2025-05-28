@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="DXUT">
+      <UniqueIdentifier>{1e162c6b-8263-46e9-91fa-5a076a40bf93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{814f6841-ec69-4d3e-99d8-6bf885b77fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXUT\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="DXUT\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="App\Header Files">
+      <UniqueIdentifier>{f4d5d8ea-7185-4994-956b-00d8b1bcc69f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Source Files">
+      <UniqueIdentifier>{8699f2ec-131e-49f4-acce-5ae9833fd202}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Shader Files">
+      <UniqueIdentifier>{8a39d315-497f-4b10-8a6c-9346048b4f93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App\Resource Files">
+      <UniqueIdentifier>{866e2c12-bc0a-43e8-86fc-9ac78a562464}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Error.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>DXUT\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierCurves.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Pipeline.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="App.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DXUT.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Error.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VBuffer.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>DXUT\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierCurves.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Vertex.hlsl">
+      <Filter>App\Shader Files</Filter>
+    </FxCompile>
+    <FxCompile Include="Pixel.hlsl">
+      <Filter>App\Shader Files</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>App\Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
