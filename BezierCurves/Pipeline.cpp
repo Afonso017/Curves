@@ -1,6 +1,6 @@
-#include "BezierCurves.h"
+#include "Curves.h"
 
-void BezierCurves::BuildRootSignature()
+void Curves::BuildRootSignature()
 {
     // descrição para uma assinatura vazia
     D3D12_ROOT_SIGNATURE_DESC rootSigDesc = {};
@@ -28,7 +28,7 @@ void BezierCurves::BuildRootSignature()
         IID_PPV_ARGS(&rootSignature)));
 }
 
-void BezierCurves::BuildPipelineState()
+void Curves::BuildPipelineState()
 {
     // --------------------
     // --- Input Layout ---

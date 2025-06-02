@@ -50,10 +50,19 @@
     <ClCompile Include="Window.cpp">
       <Filter>DXUT\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BezierCurves.cpp">
+    <ClCompile Include="Curves.cpp">
       <Filter>App\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Pipeline.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertices.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ChaikinAlgorithm.cpp">
+      <Filter>App\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BezierAlgorithm.cpp">
       <Filter>App\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -88,7 +97,16 @@
     <ClInclude Include="Window.h">
       <Filter>DXUT\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BezierCurves.h">
+    <ClInclude Include="Curves.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CurveAlgorithm.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ChaikinAlgorithm.h">
+      <Filter>App\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BezierAlgorithm.h">
       <Filter>App\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
