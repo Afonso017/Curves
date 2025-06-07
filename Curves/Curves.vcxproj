@@ -22,7 +22,7 @@
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{9191e720-02a8-4abc-9e2a-b91ac590bd4e}</ProjectGuid>
-    <RootNamespace>BezierCurves</RootNamespace>
+    <RootNamespace>Curves</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -136,7 +136,6 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Pipeline.cpp" />
     <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="Vertices.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

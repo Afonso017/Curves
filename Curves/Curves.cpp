@@ -4,8 +4,15 @@
 
 void Curves::Init()
 {
-    // cria vertex buffer
-    vbuffer = new VertexBuffer<Vertex>(nullptr, MaxSize);
+    // inicializa vetor de ponteiros de algoritmos
+    algorithms = new CurveAlgorithm*[2]
+    {
+        new ChaikinAlgorithm(),
+        new BezierAlgorithm()
+    };
+
+    // algoritmo padrão é o de chaikin
+    algorithm = algorithms[1];
 
     // configura pipeline
     BuildRootSignature();
@@ -13,15 +20,6 @@ void Curves::Init()
 
     // envia comandos para a gpu
     graphics->SendToGpu();
-
-    algorithms = new CurveAlgorithm*[2]
-    {
-        new ChaikinAlgorithm(this),
-        new BezierAlgorithm(this)
-    };
-    
-    // algoritmo padrão é o de chaikin
-    algorithm = algorithms[0];
 }
 
 void Curves::Update()
@@ -45,37 +43,66 @@ void Curves::Update()
         float y = (cy - my) / cy;
 
         algorithm->OnCreateVertex(x, y);
+        Display();
     }
 
     // limpa a tela ao pressionar DELETE
     if (input->KeyPress(VK_DELETE))
+    {
         algorithm->OnDelete();
+
+        // atualiza o desenho
+        Display();
+    }
 
     // executa uma iteração do algoritmo ao pressionar ENTER
     if (input->KeyPress(VK_RETURN))
+    {
         algorithm->OnIterate();
+
+        // atualiza o desenho
+        Display();
+    }
+
+    // salva curva
+    if (input->KeyPress('S'))
+        algorithm->Save();
+
+    // carrega última curva salva correspondente ao algoritmo especificado
+    if (input->KeyPress('L'))
+    {
+        algorithm->Load();
+
+        // atualiza o desenho
+        Display();
+    }
 
     // alterna entre os algoritmos
     if (input->KeyPress('C'))
-        algorithm = algorithms[0];
+        algorithm = algorithms[0];  // chaikin
 
     if (input->KeyPress('B'))
-        algorithm = algorithms[1];
+        algorithm = algorithms[1];  // bezier
 }
 
 void Curves::Display()
 {
+    // copia vértices para o buffer da GPU usando o buffer de Upload
+    graphics->PrepareGpu(algorithm->pipelineState);
+    algorithm->Copy();
+    graphics->SendToGpu();
+
     // limpa backbuffer
-    graphics->Clear(pipelineState);
+    graphics->Clear(algorithm->pipelineState);
 
     // submete comandos de configuração do pipeline
     graphics->CommandList()->SetGraphicsRootSignature(rootSignature);
-    graphics->CommandList()->SetPipelineState(pipelineState);
-    graphics->CommandList()->IASetVertexBuffers(0, 1, vbuffer->View());
-    graphics->CommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_LINESTRIP);
+    graphics->CommandList()->SetPipelineState(algorithm->pipelineState);
+    graphics->CommandList()->IASetVertexBuffers(0, 1, algorithm->vbuffer->View());
+    graphics->CommandList()->IASetPrimitiveTopology(algorithm->topology);
 
     // submete comandos de desenho
-    graphics->CommandList()->DrawInstanced(count, 1, 0, 0);
+    graphics->CommandList()->DrawInstanced(algorithm->count, 1, 0, 0);
 
     // apresenta backbuffer
     graphics->Present();
@@ -88,10 +115,9 @@ void Curves::Finalize()
 
     // libera memória alocada
     rootSignature->Release();
-    pipelineState->Release();
-    delete vbuffer;
-    delete algorithms[0];
+
     delete algorithms[1];
+    delete algorithms[0];
     delete algorithms;
 }
 

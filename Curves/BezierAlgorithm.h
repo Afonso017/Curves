@@ -1,16 +1,18 @@
 #pragma once
 #include "CurveAlgorithm.h"
 
-class ChaikinAlgorithm : public CurveAlgorithm
+class BezierAlgorithm : public CurveAlgorithm
 {
+    uint numClicks{};
+
 public:
-    ChaikinAlgorithm(Curves* app);
+    BezierAlgorithm();
+    ~BezierAlgorithm();
 
     void OnCreateVertex(float x, float y) override;
     void OnDelete() override;
     void OnIterate() override;
 
-    void Display() override;
     void Save() override;
     void Load() override;
 };
