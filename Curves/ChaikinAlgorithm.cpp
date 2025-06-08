@@ -15,7 +15,7 @@ ChaikinAlgorithm::~ChaikinAlgorithm()
     delete vbuffer;
 }
 
-void ChaikinAlgorithm::OnCreateVertex(float x, float y)
+void ChaikinAlgorithm::OnClick(float x, float y)
 {
     // muda a cor dos novos vértices para amarelo caso existam mais de 14
     vertices[index] = { XMFLOAT3(x, y, 0.f), (count >= 15 ? XMFLOAT4(Colors::Yellow) : XMFLOAT4(Colors::White)) };

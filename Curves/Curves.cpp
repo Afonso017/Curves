@@ -28,21 +28,33 @@ void Curves::Update()
     if (input->KeyPress(VK_ESCAPE))
         window->Close();
 
+    // atualiza posição do mouse
+    float cx = float(window->CenterX());
+    float cy = float(window->CenterY());
+    float mx = float(input->MouseX());
+    float my = float(input->MouseY());
+
+    // converte as coordenadas da tela para a faixa -1.0 a 1.0
+    // cy e my foram invertidos para levar em consideração que
+    // o eixo y da tela cresce na direção oposta do cartesiano
+    mouseX = (mx - cx) / cx;
+    mouseY = (cy - my) / cy;
+
+    // verifica se o mouse mudou de posição
+    if (lastX != mouseX || lastY != mouseY)
+    {
+        algorithm->OnMouseMove(mouseX, mouseY);
+        lastX = mouseX;
+        lastY = mouseY;
+
+        // atualiza o desenho
+        Display();
+    }
+
     // cria vértices com o clique do mouse
     if (input->KeyPress(VK_LBUTTON))
     {
-        float cx = float(window->CenterX());
-        float cy = float(window->CenterY());
-        float mx = float(input->MouseX());
-        float my = float(input->MouseY());
-        
-        // converte as coordenadas da tela para a faixa -1.0 a 1.0
-        // cy e my foram invertidos para levar em consideração que
-        // o eixo y da tela cresce na direção oposta do cartesiano
-        float x = (mx - cx) / cx;
-        float y = (cy - my) / cy;
-
-        algorithm->OnCreateVertex(x, y);
+        algorithm->OnClick(mouseX, mouseY);
         Display();
     }
 
@@ -50,8 +62,6 @@ void Curves::Update()
     if (input->KeyPress(VK_DELETE))
     {
         algorithm->OnDelete();
-
-        // atualiza o desenho
         Display();
     }
 
@@ -59,30 +69,35 @@ void Curves::Update()
     if (input->KeyPress(VK_RETURN))
     {
         algorithm->OnIterate();
-
-        // atualiza o desenho
         Display();
     }
 
     // salva curva
     if (input->KeyPress('S'))
+    {
         algorithm->Save();
+        Display();
+    }
 
     // carrega última curva salva correspondente ao algoritmo especificado
     if (input->KeyPress('L'))
     {
         algorithm->Load();
-
-        // atualiza o desenho
         Display();
     }
 
     // alterna entre os algoritmos
     if (input->KeyPress('C'))
+    {
         algorithm = algorithms[0];  // chaikin
+        Display();
+    }
 
     if (input->KeyPress('B'))
+    {
         algorithm = algorithms[1];  // bezier
+        Display();
+    }
 }
 
 void Curves::Display()

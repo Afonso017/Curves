@@ -121,8 +121,6 @@ void Curves::BuildPipelineState()
     pso.SampleDesc.Count = graphics->Antialiasing();
     pso.SampleDesc.Quality = graphics->Quality();
     graphics->Device()->CreateGraphicsPipelineState(&pso, IID_PPV_ARGS(&algorithms[0]->pipelineState));
-
-    pso.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
     graphics->Device()->CreateGraphicsPipelineState(&pso, IID_PPV_ARGS(&algorithms[1]->pipelineState));
 
     vertexShader->Release();

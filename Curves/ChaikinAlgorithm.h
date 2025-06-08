@@ -9,7 +9,8 @@ public:
     ChaikinAlgorithm();
     ~ChaikinAlgorithm();
 
-    void OnCreateVertex(float x, float y) override;
+    void OnMouseMove(float x, float y) override {};
+    void OnClick(float x, float y) override;
     void OnDelete() override;
     void OnIterate() override;
 

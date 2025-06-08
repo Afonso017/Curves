@@ -24,7 +24,8 @@ public:
 
     virtual ~CurveAlgorithm() = default;
 
-    virtual void OnCreateVertex(float x, float y) = 0;
+    virtual void OnMouseMove(float x, float y) = 0;
+    virtual void OnClick(float x, float y) = 0;
     virtual void OnDelete() = 0;
     virtual void OnIterate() = 0;
 
@@ -34,6 +35,6 @@ public:
         vbuffer->Copy(vertices, count);
     };
 
-    virtual void Save() = 0;            // salva estado do algoritmo
-    virtual void Load() = 0;            // carrega último estado salvo
+    virtual void Save() = 0;    // salva estado do algoritmo
+    virtual void Load() = 0;    // carrega último estado salvo
 };
