@@ -16,9 +16,11 @@ public:
     D3D_PRIMITIVE_TOPOLOGY topology{};
 
     // vertex buffer e vetor de vértices
-    static const uint MaxSize{ 1024 };
+    static const uint MaxSize{ 2040 };
     VertexBuffer<Vertex>* vbuffer{};
     Vertex vertices[MaxSize]{};
+    Vertex save[MaxSize]{};
+    uint saveIndex{};
     uint count{};
     uint index{};
 

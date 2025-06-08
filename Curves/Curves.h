@@ -7,8 +7,8 @@ class Curves : public App
     CurveAlgorithm* algorithm{};      // ponteiro para o algoritmo atual
     CurveAlgorithm** algorithms{};    // vetor de algoritmos
 
-    float mouseX, mouseY;
-    float lastX, lastY;
+    float mouseX{}, mouseY{};
+    float lastX{}, lastY{};
 
 public:
     void Init();

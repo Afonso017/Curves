@@ -31,94 +31,81 @@ BezierAlgorithm::~BezierAlgorithm()
 void BezierAlgorithm::OnMouseMove(float x, float y)
 {
 	// verifica quantos cliques até agora
-	if (numClicks == 1)
+	// manipula primeiro offset dos vértices de apoio somente no primeiro clique
+	// após isso, sempre manipula o segundo offset, para facilitar a identificação dos vértices ao chamar DrawBezier
+	if (numClicks % 2 == 1)
 	{
-		/* calcula vetor distância entre posição do mouse com o ponto do clique e o inverte
-		float vx = -(x - vertices[0].Pos.x);
-		float vy = -(y - vertices[0].Pos.y);
-		vx += vertices[0].Pos.x;	// desloca para a posição correta
-		vy += vertices[0].Pos.y;
-		*/
+		offset = numClicks == 1 ? 0 : 20;
 
-		// expressão simplificada
-		float vx = 2 * vertices[0].Pos.x - x;
-		float vy = 2 * vertices[0].Pos.y - y;
+		MoveSupportVertices(x, y);
 
-		// ponto invertido
-		vertices[1].Pos.x = vx;
-		vertices[1].Pos.y = vy;
-
-		// ponto que segue o mouse
-		vertices[3].Pos.x = x;
-		vertices[3].Pos.y = y;
-		vertices[3].Color = XMFLOAT4(0.098f, 0.098f, 0.098f, 1.f);	// ajusta para a cor de fundo
-
-		// quadrado invertido
-		for (uint i = 0, index = 4; index < 12; ++index, ++i)
+		if (numClicks >= 3)
 		{
-			vertices[index].Pos.x = vx + quadAux[i].Pos.x;
-			vertices[index].Pos.y = vy + quadAux[i].Pos.y;
+			// índice da próxima curva
+			count = index;
+
+			// desenha a curva
+			DrawBezier();
 		}
-	}
-	else if (numClicks == 3)
-	{
-		float vx = 2 * vertices[0 + numSupport].Pos.x - x;
-		float vy = 2 * vertices[0 + numSupport].Pos.y - y;
-
-		// ponto invertido
-		vertices[1 + numSupport].Pos.x = vx;
-		vertices[1 + numSupport].Pos.y = vy;
-
-		// ponto que segue o mouse
-		vertices[3 + numSupport].Pos.x = x;
-		vertices[3 + numSupport].Pos.y = y;
-		vertices[3 + numSupport].Color = XMFLOAT4(0.098f, 0.098f, 0.098f, 1.f);	// ajusta para a cor de fundo
-
-		// quadrado invertido
-		for (uint i = 0, index = 4 + numSupport; index < 12 + numSupport; ++index, ++i)
-		{
-			vertices[index].Pos.x = vx + quadAux[i].Pos.x;
-			vertices[index].Pos.y = vy + quadAux[i].Pos.y;
-		}
-
-		// redesenha a curva
-		count = 40;
-		DrawBezier();
 	}
 }
 
 void BezierAlgorithm::OnClick(float x, float y)
 {
+	if (count == MaxSize)
+	{
+		MessageBox(0, string("Limite máximo de curvas atingido").c_str(), string("Erro ao gerar nova curva").c_str(), MB_OK);
+		return;
+	}
+
 	// verifica quantos cliques até agora
 	switch (numClicks)
 	{
-	case 0:	// primeiro clique, gera dois quadrados e duas linhas
+	case 0:	// primeiro clique, gera dois quadrados, duas linhas e define P1
 		GenerateSupportVertices(x, y);
-
-		numClicks++;
 		break;
 
-	case 1:
-		numClicks++;
+	case 1: // segundo clique define P2
+		index = 40;
 		break;
 
-	case 2:
+	case 2: // terceiro clique gera mais dois quadrados e duas linhas e define P4
 		GenerateSupportVertices(x, y);
-
-		// desenha a curva
+		offset = 20;
+		MoveSupportVertices(x, y);
 		DrawBezier();
-		numClicks++;
 		break;
 
-	//case 3: // no quarto clique, inverte as posições de p3 e p4
-	//	
-	//	break;
+	default: // inverte P3 com seu ponto oposto e reposiciona vértices no vetor para garantir a ordem
+		if (numClicks % 2 == 1) index += 100;
+		else
+		{
+			std::copy(vertices + offset, vertices + 20 + offset, vertices);
+			std::swap(vertices[1].Pos, vertices[3].Pos);
+
+			for (uint i = 0, index = 4; index < 12; ++index, ++i)
+			{
+				vertices[index].Pos.x = vertices[1].Pos.x + quadAux[i].Pos.x;
+				vertices[index].Pos.y = vertices[1].Pos.y + quadAux[i].Pos.y;
+			}
+
+			index = count;
+			count = 20;
+			GenerateSupportVertices(x, y);
+
+			count = index;
+			DrawBezier();
+		}
+
+		break;
 	}
+	numClicks++;
 }
 
 void BezierAlgorithm::OnDelete()
 {
-	count = index = numClicks = 0;
+	count = numClicks = 0;
+	index = 40;
 }
 
 void BezierAlgorithm::OnIterate() {}
@@ -154,6 +141,36 @@ void BezierAlgorithm::GenerateSupportVertices(float x, float y)
 	}
 }
 
+void BezierAlgorithm::MoveSupportVertices(float x, float y)
+{
+	/* calcula vetor distância entre posição do mouse com o ponto do clique e o inverte
+	float vx = -(x - vertices[0].Pos.x);
+	float vy = -(y - vertices[0].Pos.y);
+	vx += vertices[0].Pos.x;	// desloca para a posição correta
+	vy += vertices[0].Pos.y;
+	*/
+
+	// expressão simplificada
+	float vx = 2 * vertices[0 + offset].Pos.x - x;
+	float vy = 2 * vertices[0 + offset].Pos.y - y;
+
+	// ponto invertido
+	vertices[1 + offset].Pos.x = vx;
+	vertices[1 + offset].Pos.y = vy;
+
+	// ponto que segue o mouse
+	vertices[3 + offset].Pos.x = x;
+	vertices[3 + offset].Pos.y = y;
+	vertices[3 + offset].Color = XMFLOAT4(0.098f, 0.098f, 0.098f, 1.f);	// ajusta para a cor de fundo
+
+	// quadrado invertido
+	for (uint i = 0, index = 4 + offset; index < 12 + offset; ++index, ++i)
+	{
+		vertices[index].Pos.x = vx + quadAux[i].Pos.x;
+		vertices[index].Pos.y = vy + quadAux[i].Pos.y;
+	}
+}
+
 void BezierAlgorithm::DrawBezier()
 {
 	for (uint i = 0; i <= lineSegs; ++i)
@@ -162,25 +179,29 @@ void BezierAlgorithm::DrawBezier()
 
 		float px = powf(1.0f - t, 3) * vertices[0].Pos.x
 			+ 3 * t * powf(1.0f - t, 2) * vertices[1].Pos.x
-			+ 3 * t * t * (1.0f - t) * vertices[21].Pos.x
-			+ t * t * t * vertices[20].Pos.x;
+			+ 3 * t * t * (1.0f - t) * vertices[1 + offset].Pos.x
+			+ t * t * t * vertices[0 + offset].Pos.x;
 
 		float py = powf(1.0f - t, 3) * vertices[0].Pos.y
 			+ 3 * t * powf(1.0f - t, 2) * vertices[1].Pos.y
-			+ 3 * t * t * (1.0f - t) * vertices[21].Pos.y
-			+ t * t * t * vertices[20].Pos.y;
+			+ 3 * t * t * (1.0f - t) * vertices[1 + offset].Pos.y
+			+ t * t * t * vertices[0 + offset].Pos.y;
 
 		vertices[count++] = { XMFLOAT3(px, py, 0.0f), XMFLOAT4(Colors::Yellow) };
-		if (i != 0) vertices[count++] = { XMFLOAT3(px, py, 0.0f), XMFLOAT4(Colors::Yellow) };
+		if (i != 0 && i != lineSegs) vertices[count++] = { XMFLOAT3(px, py, 0.0f), XMFLOAT4(Colors::Yellow) };
 	}
 }
 
 void BezierAlgorithm::Save()
 {
-	//MessageBox(window->Id(), string("Curva salva com sucesso!").c_str(), string("Salvar Curva de Bézier").c_str(), MB_OK);
+	std::copy(vertices, vertices + count, save);
+	saveIndex = count;
+	numClicksSave = numClicks;
 }
 
 void BezierAlgorithm::Load()
 {
-
+	std::copy(save, save + saveIndex, vertices);
+	count = saveIndex;
+	numClicks = numClicksSave;
 }

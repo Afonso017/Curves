@@ -76,6 +76,9 @@ void Curves::Update()
     if (input->KeyPress('S'))
     {
         algorithm->Save();
+        MessageBox(window->Id(), string("Curva salva com sucesso!").c_str(), string("Salvar Curva").c_str(), MB_OK);
+        // message box bloqueia a liberação da tecla, então é necessário fazer manualmente
+        PostMessage(window->Id(), WM_KEYUP, 'S', 0);
         Display();
     }
 

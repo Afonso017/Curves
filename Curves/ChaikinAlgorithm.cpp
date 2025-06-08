@@ -71,10 +71,13 @@ void ChaikinAlgorithm::OnIterate()
 
 void ChaikinAlgorithm::Save()
 {
-
+    std::copy(vertices, vertices + count, save);
+    saveIndex = count;
 }
 
 void ChaikinAlgorithm::Load()
 {
-
+    std::copy(save, save + saveIndex, vertices);
+    count = saveIndex;
+    index = saveIndex;
 }
