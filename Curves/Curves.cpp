@@ -11,7 +11,7 @@ void Curves::Init()
         new BezierAlgorithm()
     };
 
-    // algoritmo padrão é o de chaikin
+    // algoritmo padrão é o de bezier
     algorithm = algorithms[1];
 
     // configura pipeline

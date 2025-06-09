@@ -4,14 +4,14 @@
 // vértices dos quadrados de apoio
 const Vertex quadAux[8]
 {
-	{ XMFLOAT3(-0.01f, -0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v0
-	{ XMFLOAT3(0.01f, -0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v1
-	{ XMFLOAT3(0.01f, -0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v1
-	{ XMFLOAT3(0.01f, 0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v2
-	{ XMFLOAT3(0.01f, 0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v2
-	{ XMFLOAT3(-0.01f, 0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v3
-	{ XMFLOAT3(-0.01f, 0.015f, 0.f), XMFLOAT4(Colors::DarkRed) },	// v3
-	{ XMFLOAT3(-0.01f, -0.015f, 0.f), XMFLOAT4(Colors::DarkRed) }	// v0
+	{ XMFLOAT3(-0.01f, -0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v0
+	{ XMFLOAT3(0.01f, -0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v1
+	{ XMFLOAT3(0.01f, -0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v1
+	{ XMFLOAT3(0.01f, 0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v2
+	{ XMFLOAT3(0.01f, 0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v2
+	{ XMFLOAT3(-0.01f, 0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v3
+	{ XMFLOAT3(-0.01f, 0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v3
+	{ XMFLOAT3(-0.01f, -0.015f, 0.f), XMFLOAT4(Colors::Red) }	// v0
 };
 
 BezierAlgorithm::BezierAlgorithm()
@@ -52,9 +52,10 @@ void BezierAlgorithm::OnMouseMove(float x, float y)
 
 void BezierAlgorithm::OnClick(float x, float y)
 {
-	if (count == MaxSize)
+	// limite máximo de 20 curvas = 2040, cada curva tem 100 vértices + 40 vértices de apoio
+	if (count == MaxSize && numClicks % 2 == 0)
 	{
-		MessageBox(0, string("Limite máximo de curvas atingido").c_str(), string("Erro ao gerar nova curva").c_str(), MB_OK);
+		MessageBox(0, string("Limite máximo de curvas atingido: 20").c_str(), string("Erro ao gerar nova curva").c_str(), MB_OK);
 		return;
 	}
 
@@ -66,12 +67,12 @@ void BezierAlgorithm::OnClick(float x, float y)
 		break;
 
 	case 1: // segundo clique define P2
-		index = 40;
+		index = 40;		// início da curva
 		break;
 
 	case 2: // terceiro clique gera mais dois quadrados e duas linhas e define P4
 		GenerateSupportVertices(x, y);
-		offset = 20;
+		offset = 20;	// trabalha com o segundo conjunto de vértices de apoio
 		MoveSupportVertices(x, y);
 		DrawBezier();
 		break;
@@ -83,6 +84,7 @@ void BezierAlgorithm::OnClick(float x, float y)
 			std::copy(vertices + offset, vertices + 20 + offset, vertices);
 			std::swap(vertices[1].Pos, vertices[3].Pos);
 
+			// reposiciona quadrado de apoio de P3
 			for (uint i = 0, index = 4; index < 12; ++index, ++i)
 			{
 				vertices[index].Pos.x = vertices[1].Pos.x + quadAux[i].Pos.x;
@@ -96,7 +98,6 @@ void BezierAlgorithm::OnClick(float x, float y)
 			count = index;
 			DrawBezier();
 		}
-
 		break;
 	}
 	numClicks++;
@@ -125,8 +126,8 @@ void BezierAlgorithm::GenerateSupportVertices(float x, float y)
 		if (i < 2)
 		{
 			// linha
-			vertices[count++] = { XMFLOAT3(x, y, 0.f), XMFLOAT4(Colors::DarkRed) };
-			vertices[count++] = { XMFLOAT3(x, y, 0.f), XMFLOAT4(Colors::DarkRed) };
+			vertices[count++] = { XMFLOAT3(x, y, 0.f), XMFLOAT4(Colors::Red) };
+			vertices[count++] = { XMFLOAT3(x, y, 0.f), XMFLOAT4(Colors::Red) };
 		}
 		else
 		{
@@ -188,6 +189,8 @@ void BezierAlgorithm::DrawBezier()
 			+ t * t * t * vertices[0 + offset].Pos.y;
 
 		vertices[count++] = { XMFLOAT3(px, py, 0.0f), XMFLOAT4(Colors::Yellow) };
+
+		// LINELIST precisa de vértices duplicados
 		if (i != 0 && i != lineSegs) vertices[count++] = { XMFLOAT3(px, py, 0.0f), XMFLOAT4(Colors::Yellow) };
 	}
 }
@@ -203,5 +206,6 @@ void BezierAlgorithm::Load()
 {
 	std::copy(save, save + saveIndex, vertices);
 	count = saveIndex;
+	index = count - 100;
 	numClicks = numClicksSave;
 }
