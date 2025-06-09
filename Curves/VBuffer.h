@@ -32,7 +32,7 @@ private:
 public:
 
     // construtor que aloca e copia dados para o vertex buffer
-    VertexBuffer<T>(const void* vertices, uint count) : view{}
+    VertexBuffer<T>(const void * vertices, uint count)
     {
         // guarda tamanho do vértice
         stride = sizeof(T);
@@ -85,3 +85,6 @@ public:
 // -------------------------------------------------------------------------------
 
 #endif
+
+
+

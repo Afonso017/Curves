@@ -20,6 +20,16 @@ void Curves::Init()
 
     // envia comandos para a gpu
     graphics->SendToGpu();
+
+    string str(""
+        "C -> alterna para o algoritmo de Chaikin\n"
+        "B -> alterna para o algoritmo de Bézier\n"
+        "S -> salva estado da curva\n"
+        "L -> carrega estado da curva\n"
+        "DELETE -> apaga a curva\n"
+        "ENTER -> faz uma iteração de Chaikin"
+    "");
+    MessageBox(window->Id(), string(str).c_str(), string("Controles da Aplicação").c_str(), MB_OK);
 }
 
 void Curves::Update()

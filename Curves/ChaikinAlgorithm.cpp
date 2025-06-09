@@ -50,7 +50,7 @@ void ChaikinAlgorithm::OnIterate()
             float dy = p1.Pos.y - p0.Pos.y;
             float dx = p1.Pos.x - p0.Pos.x;
 
-            // cria dois novos vértices para essa iteração e os adiciona ao vetor curve
+            // cria dois novos vértices para essa iteração e os adiciona ao vetor auxiliar
             aux[index++] = { XMFLOAT3(p0.Pos.x + 0.25f * dx, p0.Pos.y + 0.25f * dy, 0.f), XMFLOAT4(Colors::Green) };
             aux[index++] = { XMFLOAT3(p0.Pos.x + 0.75f * dx, p0.Pos.y + 0.75f * dy, 0.f), XMFLOAT4(Colors::Green) };
         }
