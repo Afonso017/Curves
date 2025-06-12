@@ -11,7 +11,6 @@ ChaikinAlgorithm::ChaikinAlgorithm()
 
 ChaikinAlgorithm::~ChaikinAlgorithm()
 {
-    pipelineState->Release();
     delete vbuffer;
 }
 
@@ -69,15 +68,37 @@ void ChaikinAlgorithm::OnIterate()
     }
 }
 
-void ChaikinAlgorithm::Save()
+bool ChaikinAlgorithm::Save()
 {
-    std::copy(vertices, vertices + count, save);
-    saveIndex = count;
+    std::ofstream file("chaikin.dat", std::ios::binary);
+
+    if (!file) return false;
+
+    CurveSave* curveSave = new CurveSave();
+    std::copy(vertices, vertices + count, curveSave->save);
+    curveSave->saveIndex = count;
+
+    file.write(reinterpret_cast<const char*>(curveSave), sizeof(CurveSave));
+    file.close();
+
+    delete curveSave;
+    return true;
 }
 
-void ChaikinAlgorithm::Load()
+bool ChaikinAlgorithm::Load()
 {
-    std::copy(save, save + saveIndex, vertices);
-    count = saveIndex;
-    index = saveIndex;
+    std::ifstream file("chaikin.dat", std::ios::binary);
+
+    if (!file) return false;
+
+    CurveSave* curveSave = new CurveSave();
+    file.read(reinterpret_cast<char*>(curveSave), sizeof(CurveSave));
+    file.close();
+
+    std::copy(curveSave->save, curveSave->save + curveSave->saveIndex, vertices);
+    count = curveSave->saveIndex;
+    index = curveSave->saveIndex;
+
+    delete curveSave;
+    return true;
 }

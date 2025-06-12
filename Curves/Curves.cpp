@@ -29,7 +29,7 @@ void Curves::Init()
         "DELETE -> apaga a curva\n"
         "ENTER -> faz uma iteração de Chaikin"
     "");
-    MessageBox(window->Id(), string(str).c_str(), string("Controles da Aplicação").c_str(), MB_OK);
+    MessageBox(window->Id(), str.c_str(), "Controles da Aplicação", MB_OK);
 }
 
 void Curves::Update()
@@ -85,18 +85,33 @@ void Curves::Update()
     // salva curva
     if (input->KeyPress('S'))
     {
-        algorithm->Save();
-        MessageBox(window->Id(), string("Curva salva com sucesso!").c_str(), string("Salvar Curva").c_str(), MB_OK);
+        if (algorithm->Save())
+        {
+            Display();
+            MessageBox(window->Id(), "Curva salva com sucesso!", "Salvar Curva", MB_OK);
+        }
+        else
+        {
+            MessageBox(window->Id(), "Erro ao salvar curva em arquivo", "Erro", MB_OK);
+        }
         // message box bloqueia a liberação da tecla, então é necessário fazer manualmente
         PostMessage(window->Id(), WM_KEYUP, 'S', 0);
-        Display();
     }
 
     // carrega última curva salva correspondente ao algoritmo especificado
     if (input->KeyPress('L'))
     {
-        algorithm->Load();
-        Display();
+        if (algorithm->Load())
+        {
+            algorithm->OnMouseMove(mouseX, mouseY);
+            Display();
+        }
+        else
+        {
+            MessageBox(window->Id(), "Arquivo de save não encontrado", "Erro", MB_OK);
+            // message box bloqueia a liberação da tecla, então é necessário fazer manualmente
+            PostMessage(window->Id(), WM_KEYUP, 'L', 0);
+        }
     }
 
     // alterna entre os algoritmos
@@ -116,16 +131,16 @@ void Curves::Update()
 void Curves::Display()
 {
     // copia vértices para o buffer da GPU usando o buffer de Upload
-    graphics->PrepareGpu(algorithm->pipelineState);
+    graphics->PrepareGpu(pipelineState);
     algorithm->Copy();
     graphics->SendToGpu();
 
     // limpa backbuffer
-    graphics->Clear(algorithm->pipelineState);
+    graphics->Clear(pipelineState);
 
     // submete comandos de configuração do pipeline
     graphics->CommandList()->SetGraphicsRootSignature(rootSignature);
-    graphics->CommandList()->SetPipelineState(algorithm->pipelineState);
+    graphics->CommandList()->SetPipelineState(pipelineState);
     graphics->CommandList()->IASetVertexBuffers(0, 1, algorithm->vbuffer->View());
     graphics->CommandList()->IASetPrimitiveTopology(algorithm->topology);
 
@@ -143,6 +158,7 @@ void Curves::Finalize()
 
     // libera memória alocada
     rootSignature->Release();
+    pipelineState->Release();
 
     delete algorithms[1];
     delete algorithms[0];
@@ -164,7 +180,7 @@ int APIENTRY WinMain(
         // cria motor e configura a janela
         Engine* engine = new Engine();
         engine->window->Mode(ASPECTRATIO);
-        engine->window->Size(1024, 600);
+        engine->window->Size(1280, 720);
         engine->window->Color(25, 25, 25);
         engine->window->Title("Curvas");
         engine->window->Icon("Icon");

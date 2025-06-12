@@ -3,6 +3,7 @@
 class Curves : public App
 {
     ID3D12RootSignature* rootSignature{};
+    ID3D12PipelineState* pipelineState{};
 
     CurveAlgorithm* algorithm{};      // ponteiro para o algoritmo atual
     CurveAlgorithm** algorithms{};    // vetor de algoritmos

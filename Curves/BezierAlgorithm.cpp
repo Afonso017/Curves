@@ -1,7 +1,7 @@
 #include "BezierAlgorithm.h"
 #include "Curves.h"
 
-// vértices dos quadrados de apoio
+// vértices dos quadrados de apoio, considerando LINELIST como topologia
 const Vertex quadAux[8]
 {
 	{ XMFLOAT3(-0.01f, -0.015f, 0.f), XMFLOAT4(Colors::Red) },	// v0
@@ -16,7 +16,7 @@ const Vertex quadAux[8]
 
 BezierAlgorithm::BezierAlgorithm()
 {
-  	topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+	topology = D3D_PRIMITIVE_TOPOLOGY_LINELIST;
 
 	// aloca vertex buffer
 	vbuffer = new VertexBuffer<Vertex>(nullptr, MaxSize);
@@ -24,7 +24,6 @@ BezierAlgorithm::BezierAlgorithm()
 
 BezierAlgorithm::~BezierAlgorithm()
 {
-	pipelineState->Release();
 	delete vbuffer;
 }
 
@@ -33,7 +32,7 @@ void BezierAlgorithm::OnMouseMove(float x, float y)
 	// verifica quantos cliques até agora
 	// manipula primeiro offset dos vértices de apoio somente no primeiro clique
 	// após isso, sempre manipula o segundo offset, para facilitar a identificação dos vértices ao chamar DrawBezier
-	if (numClicks % 2 == 1)
+	if (showSupport && numClicks % 2 == 1)
 	{
 		offset = numClicks == 1 ? 0 : 20;
 
@@ -55,8 +54,14 @@ void BezierAlgorithm::OnClick(float x, float y)
 	// limite máximo de 20 curvas = 2040, cada curva tem 100 vértices + 40 vértices de apoio
 	if (count == MaxSize && numClicks % 2 == 0)
 	{
-		MessageBox(0, string("Limite máximo de curvas atingido: 20").c_str(), string("Erro ao gerar nova curva").c_str(), MB_OK);
+		MessageBox(0, "Limite máximo de curvas atingido: 20", "Erro ao gerar nova curva", MB_OK);
 		return;
+	}
+
+	if (!showSupport)
+	{
+		Load();
+		showSupport = true;
 	}
 
 	// verifica quantos cliques até agora
@@ -195,17 +200,48 @@ void BezierAlgorithm::DrawBezier()
 	}
 }
 
-void BezierAlgorithm::Save()
+bool BezierAlgorithm::Save()
 {
-	std::copy(vertices, vertices + count, save);
-	saveIndex = count;
-	numClicksSave = numClicks;
+	std::ofstream file("bezier.dat", std::ios::binary);
+
+	if (!file) return false;
+
+	CurveSave* curveSave = new CurveSave();
+	curveSave->saveIndex = count;
+	curveSave->numClicksSave = numClicks;
+	curveSave->offsetSave = offset;
+	std::copy(vertices, vertices + count, curveSave->save);
+
+	// fatia os 40 primeiros vértices do vetor para não mostrar as linhas de suporte
+	if (count >= 140)
+	{
+		std::copy(curveSave->save + 40, curveSave->save + count, vertices);
+		showSupport = false;
+	}
+
+	file.write(reinterpret_cast<const char*>(curveSave), sizeof(CurveSave));
+	file.close();
+
+	delete curveSave;
+	return true;
 }
 
-void BezierAlgorithm::Load()
+bool BezierAlgorithm::Load()
 {
-	std::copy(save, save + saveIndex, vertices);
-	count = saveIndex;
-	index = count - 100;
-	numClicks = numClicksSave;
+	std::ifstream file("bezier.dat", std::ios::binary);
+
+	if (!file) return false;
+
+	CurveSave* curveSave = new CurveSave();
+	file.read(reinterpret_cast<char*>(curveSave), sizeof(CurveSave));
+	file.close();
+
+	std::copy(curveSave->save, curveSave->save + curveSave->saveIndex, vertices);
+	count = curveSave->saveIndex;
+	index = (count >= 140 ? count - 100 : 40);
+	numClicks = curveSave->numClicksSave;
+	offset = curveSave->offsetSave;
+
+	delete curveSave;
+	return true;
 }

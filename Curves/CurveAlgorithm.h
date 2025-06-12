@@ -11,16 +11,12 @@ struct Vertex
 class CurveAlgorithm
 {
 public:
-    // cada algoritmo possui pso e topologia diferente
-    ID3D12PipelineState* pipelineState{};
     D3D_PRIMITIVE_TOPOLOGY topology{};
 
     // vertex buffer e vetor de vértices
     static const uint MaxSize{ 2040 };
     VertexBuffer<Vertex>* vbuffer{};
     Vertex vertices[MaxSize]{};
-    Vertex save[MaxSize]{};
-    uint saveIndex{};
     uint count{};
     uint index{};
 
@@ -37,6 +33,6 @@ public:
         vbuffer->Copy(vertices, count);
     };
 
-    virtual void Save() = 0;    // salva estado do algoritmo
-    virtual void Load() = 0;    // carrega último estado salvo
+    virtual bool Save() = 0;    // salva estado do algoritmo
+    virtual bool Load() = 0;    // carrega último estado salvo
 };

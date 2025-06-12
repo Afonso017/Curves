@@ -1,8 +1,16 @@
 #pragma once
 #include "CurveAlgorithm.h"
+#include <fstream>
 
 class ChaikinAlgorithm : public CurveAlgorithm
 {
+    // estrutura para salvar a curva em arquivo
+    struct CurveSave
+    {
+        Vertex save[MaxSize]{};
+        uint saveIndex{};
+    };
+
     Vertex aux[MaxSize]{};
 
 public:
@@ -14,6 +22,6 @@ public:
     void OnDelete() override;
     void OnIterate() override;
 
-    void Save() override;
-    void Load() override;
+    bool Save() override;
+    bool Load() override;
 };
